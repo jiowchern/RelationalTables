@@ -138,7 +138,7 @@ namespace Regulus.RelationalTables.Tests
         public void FieldValueRelationTest()
         {
             var table = NSubstitute.Substitute.For<ITableFindable>();
-            table.Find(NSubstitute.Arg.Is(typeof(TestConfig1))).Returns(_ReturnTestConfig1 );
+            table.FindRows(NSubstitute.Arg.Is(typeof(TestConfig1))).Returns(_ReturnTestConfig1 );
             var type = typeof(TestConfig3);
             var field = type.GetField(nameof(TestConfig3.Field1));
             var row = NSubstitute.Substitute.For<IRowQueryable>();

@@ -43,13 +43,17 @@ namespace Regulus.RelationalTables
 
         private bool _TryRelation(out object instance)
         {
+            instance = null;
+            var rows = from row in _Finder.FindRows(_Field.FieldType) select row;
+            if (!rows.Any())
+                return false;
             var colValue = (from col in _Row.GetColumns() where col.Name == _Field.Name select col.Value).Single();
-            var rows = from row in _Finder.Find(_Field.FieldType) 
+            var relatableRows = from row in rows
                        let relatable = row as IRelatable
                        where relatable.Compare(colValue)
                        select row;
 
-            instance = rows.FirstOrDefault();
+            instance = relatableRows.FirstOrDefault();
             return rows.Any();
         }
 
@@ -71,7 +75,10 @@ namespace Regulus.RelationalTables
         {
             var fieldName = _Field.Name;
             var values = from col in _Row.GetColumns() where col.Name == fieldName select col.Value;
-            return Regulus.Utility.ValueHelper.StringConvert(_Field.FieldType, values.Single());            
+            var value = values.FirstOrDefault();
+            if (value == null)
+                value = string.Empty;
+            return Regulus.Utility.ValueHelper.StringConvert(_Field.FieldType, value);            
             
         }
     }

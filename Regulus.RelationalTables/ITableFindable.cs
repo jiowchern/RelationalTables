@@ -5,6 +5,6 @@ namespace Regulus.RelationalTables
 {
     public interface ITableFindable
     {
-        IEnumerable<object> Find(Type fieldType);
+        IEnumerable<object> FindRows(Type fieldType);
     }
 }

@@ -67,7 +67,7 @@ namespace Regulus.RelationalTables
             return (new object[0]).Cast<T>();
         }
 
-        IEnumerable<object> ITableFindable.Find(Type type)
+        IEnumerable<object> ITableFindable.FindRows(Type type)
         {
             Table table;
             if (_Tables.TryGetValue(type, out table))
