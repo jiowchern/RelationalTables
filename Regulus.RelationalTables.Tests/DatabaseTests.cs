@@ -38,6 +38,12 @@ namespace Regulus.RelationalTables.Tests
         public TestConfig1 Field1;
     }
 
+    public class TestConfig4
+    {
+        public enum ENUM { A,B,C}
+        public ENUM Field1;
+    }
+
 
 
     public class DatabaseTests
@@ -100,8 +106,20 @@ namespace Regulus.RelationalTables.Tests
 
             Assert.AreEqual(1 , val.Instance);
         }
-
         [Test]
+        public void FieldValueEnumTest()
+        {
+            var table = NSubstitute.Substitute.For<ITableFindable>();
+            var type = typeof(TestConfig4);
+            var field = type.GetField(nameof(TestConfig4.Field1));
+            var row = NSubstitute.Substitute.For<IRowQueryable>();
+            row.GetColumns().Returns(_ReturnColumn4);
+            var val = new Regulus.RelationalTables.FieldValue(field, row, table);
+
+            Assert.AreEqual(TestConfig4.ENUM.A, val.Instance);
+        }
+
+            [Test]
         public void FieldValueArrayTest()
         {
 
@@ -140,6 +158,11 @@ namespace Regulus.RelationalTables.Tests
         private IEnumerable<Column> _ReturnColumn3(CallInfo arg)
         {
             return new Column[] { new Column("Field1", "1")};
+        }
+
+        private IEnumerable<Column> _ReturnColumn4(CallInfo arg)
+        {
+            return new Column[] { new Column("Field1", "A") };
         }
 
         private IEnumerable<Column> _ReturnColumn2(CallInfo arg)
