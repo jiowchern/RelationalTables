@@ -12,7 +12,7 @@ If you have a table like it.
 |-|-|-|
 |1|2|3|  
 
-Define a type.
+Define the class.
 ```csharp
 public class TestConfig1 
 {        
@@ -102,7 +102,7 @@ public class TableB
 Whether you are using Excel, CSV, Google Sheet, or another spreadsheet source, you just need to implement the following interface...  
 
 
-**Table provider**  
+**Row provider**  
 ```csharp
 namespace Regulus.RelationalTables.Raw
 {
