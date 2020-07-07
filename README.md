@@ -1,5 +1,6 @@
 # Relational Tables
-A common data table creation tool for the game industry.
+[![Maintainability](https://api.codeclimate.com/v1/badges/bdd76b4da517a29323bf/maintainability)](https://codeclimate.com/github/jiowchern/RelationalTables/maintainability)  
+
 
 ## Introduce
 Often, working in the game industry requires that the game designer take edit of the game configuration.  
