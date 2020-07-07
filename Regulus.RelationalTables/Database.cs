@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Regulus.RelationalTables.Raw;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,23 +14,32 @@ namespace Regulus.RelationalTables
         readonly System.Collections.Generic.Dictionary<Type, Table> _Tables;
         public Database(params Raw.ITableQueryable[] queryables)
         {
-
-            _Tables = _Create(queryables);
+            _Tables = new Dictionary<Type, Table>();
+            _Build(_Sort(queryables));
         }
 
-        private Dictionary<Type, Table> _Create(Raw.ITableQueryable[] queryables)
+        private IEnumerable<ITableQueryable> _Sort(ITableQueryable[] queryables)
         {
-            var table = new Dictionary<Type, Table>();
+            var sorter = new RelationalTables.Raw.RelationSorter(queryables.Select(q => q.GetTableType()));
+            foreach(var t in sorter.Types)
+            {
+                yield return queryables.Where(q => q.GetTableType() == t).Single();
+            }
+        }
+
+        private Dictionary<Type, Table> _Build(IEnumerable<Raw.ITableQueryable>  queryables)
+        {
+            var table = _Tables;
             foreach (var queryable in queryables)
             {
-                table.Add(queryable.GetType() ,  _Create(queryable)); 
+                table.Add(queryable.GetTableType() ,  _Create(queryable)); 
             }
             return table;
         }
 
         private Table _Create(Raw.ITableQueryable queryable)
         {
-            var type = queryable.GetType();
+            var type = queryable.GetTableType();
 
             var instances = new List<object>();
             var fields = type.GetFields();            

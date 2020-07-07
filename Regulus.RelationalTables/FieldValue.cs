@@ -43,16 +43,11 @@ namespace Regulus.RelationalTables
 
         private bool _TryRelation(out object instance)
         {
-
-            
             var colValue = (from col in _Row.GetColumns() where col.Name == _Field.Name select col.Value).Single();
-
-
             var rows = from row in _Finder.Find(_Field.FieldType) 
                        let relatable = row as IRelatable
                        where relatable.Compare(colValue)
                        select row;
-
 
             instance = rows.FirstOrDefault();
             return rows.Any();
@@ -60,7 +55,10 @@ namespace Regulus.RelationalTables
 
         private bool _TryCreateArray(out object instance)
         {
+
             instance = null;
+            if (!_Field.FieldType.IsArray)
+                return false;
             var array = _Field.GetCustomAttributes<Regulus.RelationalTables.Array>().FirstOrDefault() ;
             if (array == null)
                 return false;

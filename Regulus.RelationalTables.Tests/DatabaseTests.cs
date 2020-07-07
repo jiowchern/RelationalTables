@@ -53,7 +53,7 @@ namespace Regulus.RelationalTables.Tests
 
             var config1 = NSubstitute.Substitute.For<ITableQueryable>();
             config1.GetRows().Returns( new IRowQueryable[] { config1Row1 } );
-            config1.GetType().Returns( typeof(TestConfig1));
+            config1.GetTableType().Returns( typeof(TestConfig1));
 
             var db = new Regulus.RelationalTables.Database(new ITableQueryable[] { config1 });
             var config = db.Query<TestConfig1>().First();
@@ -63,14 +63,40 @@ namespace Regulus.RelationalTables.Tests
         }
 
         [Test]
-        public void FieldValueTest()
+        public void DatabaseQueryRelationTest()
         {
 
+            var config1Row1 = NSubstitute.Substitute.For<IRowQueryable>(); ;
+            config1Row1.GetColumns().Returns(_ReturnColumn1);
+
+            var config1 = NSubstitute.Substitute.For<ITableQueryable>();
+            config1.GetRows().Returns(new IRowQueryable[] { config1Row1 });
+            config1.GetTableType().Returns(typeof(TestConfig1));
+
+
+            var config1Row3 = NSubstitute.Substitute.For<IRowQueryable>(); ;
+            config1Row3.GetColumns().Returns(_ReturnColumn3);
+
+            var config3 = NSubstitute.Substitute.For<ITableQueryable>();
+            config3.GetRows().Returns(new IRowQueryable[] { config1Row3 });
+            config3.GetTableType().Returns(typeof(TestConfig3));
+
+            var db = new Regulus.RelationalTables.Database(new ITableQueryable[] { config3 , config1 });
+            var config = db.Query<TestConfig3>().First();
+            Assert.AreEqual(1, config.Field1.Field1);
+            Assert.AreEqual("2", config.Field1.Field2);
+            Assert.AreEqual(3f, config.Field1.Field3);
+        }
+
+        [Test]
+        public void FieldValueTest()
+        {
+            var table = NSubstitute.Substitute.For<ITableFindable>();
             var type = typeof(TestConfig1);
             var field = type.GetField(nameof(TestConfig1.Field1));
             var row = NSubstitute.Substitute.For<IRowQueryable>();
             row.GetColumns().Returns( _ReturnColumn1 );
-            var val = new Regulus.RelationalTables.FieldValue(field , row , null);
+            var val = new Regulus.RelationalTables.FieldValue(field , row , table);
 
             Assert.AreEqual(1 , val.Instance);
         }
@@ -94,9 +120,6 @@ namespace Regulus.RelationalTables.Tests
         public void FieldValueRelationTest()
         {
             var table = NSubstitute.Substitute.For<ITableFindable>();
-
-            
-            
             table.Find(NSubstitute.Arg.Is(typeof(TestConfig1))).Returns(_ReturnTestConfig1 );
             var type = typeof(TestConfig3);
             var field = type.GetField(nameof(TestConfig3.Field1));
@@ -128,5 +151,17 @@ namespace Regulus.RelationalTables.Tests
         {
             return new Column[] { new Column(nameof(TestConfig1.Field1) , "1") , new Column(nameof(TestConfig1.Field2), "2") , new Column(nameof(TestConfig1.Field3), "3") };
         }
-    }
+
+
+        [Test]
+        public void TypeSortTest()
+        {
+            var sorter = new RelationSorter(new Type[] { typeof(TestConfig3), typeof(TestConfig1)});
+            
+
+            Assert.AreEqual(typeof(TestConfig1)  , sorter.Types[0]);
+            Assert.AreEqual(typeof(TestConfig3), sorter.Types[1]);
+
+        }
+}
 }

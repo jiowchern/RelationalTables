@@ -7,9 +7,10 @@ namespace Regulus.RelationalTables
     {
         public interface ITableQueryable
         {
-            Type GetType();
+            Type GetTableType();
             IEnumerable<IRowQueryable> GetRows();
         }
     }
     
+
 }
