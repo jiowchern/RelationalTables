@@ -23,7 +23,7 @@ public class TestConfig1
 ```
 Query from database.
 ```csharp
-var db = new Regulus.RelationalTables.Database(new ITableQueryable[] { /*Data source ...*/ });
+var db = new Regulus.RelationalTables.Database(new IRowProvidable[] { /*Data source ...*/ });
 var config = db.Query<TestConfig1>().First();
 // config.Field1 == 1
 // config.Field2 == "2"
@@ -106,7 +106,7 @@ Whether you are using Excel, CSV, Google Sheet, or another spreadsheet source, y
 ```csharp
 namespace Regulus.RelationalTables.Raw
 {
-    public interface ITableProvidable
+    public interface IRowProvidable
     {
         Type GetTableType();
         IEnumerable<IColumnProvidable> GetRows();
@@ -125,7 +125,7 @@ namespace Regulus.RelationalTables.Raw
 ```
 **New a database**
 ```csharp
-var db = new Regulus.RelationalTables.Database(/* ITableProvidable */);
+var db = new Regulus.RelationalTables.Database(/* IRowProvidable */);
 ```
 
 
