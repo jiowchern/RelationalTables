@@ -4,7 +4,7 @@ namespace Regulus.RelationalTables
 {
     namespace Raw
     {
-        public interface IRowQoeryable
+        public interface IRowQueryable
         {
             IEnumerable<Column> GetColumns();
         }
