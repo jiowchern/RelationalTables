@@ -5,6 +5,7 @@ using System.Reflection;
 
 namespace Regulus.RelationalTables
 {
+    
     public class Array : System.Attribute
     {
         public readonly string[] Fields;

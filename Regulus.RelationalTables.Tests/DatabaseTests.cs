@@ -8,17 +8,34 @@ using System.Linq;
 
 namespace Regulus.RelationalTables.Tests
 {
-    public class TestConfig1
+    public class TestConfig1 : Regulus.RelationalTables.IRelatable
     {
+        
         public int Field1;
         public string Field2;
         public float Field3;
+
+        bool IRelatable.Compare(string val)
+        {
+            int outVal;
+            if (int.TryParse(val, out outVal))
+            {
+                return outVal == Field1;
+            }
+
+            return false;
+        }
     }
 
     public class TestConfig2
     {
         [Regulus.RelationalTables.Array("Field10", "Field11", "Field12")]   
         public int[] Field1;
+    }
+
+    public class TestConfig3
+    {        
+        public TestConfig1 Field1;
     }
 
 
@@ -71,6 +88,35 @@ namespace Regulus.RelationalTables.Tests
             Assert.AreEqual(1, values[0]);
             Assert.AreEqual(2, values[1]);
             Assert.AreEqual(3, values[2]);
+        }
+
+        [Test]
+        public void FieldValueRelationTest()
+        {
+            var table = NSubstitute.Substitute.For<ITableFindable>();
+
+            
+            
+            table.Find(NSubstitute.Arg.Is(typeof(TestConfig1))).Returns(_ReturnTestConfig1 );
+            var type = typeof(TestConfig3);
+            var field = type.GetField(nameof(TestConfig3.Field1));
+            var row = NSubstitute.Substitute.For<IRowQueryable>();
+            row.GetColumns().Returns(_ReturnColumn3);
+            var val = new Regulus.RelationalTables.FieldValue(field, row, table);
+            var config1 = val.Instance as TestConfig1;
+            Assert.AreEqual(1, config1.Field1);
+            Assert.AreEqual("2", config1.Field2);
+            Assert.AreEqual(3f, config1.Field3);
+        }
+
+        private IEnumerable<object> _ReturnTestConfig1(CallInfo arg)
+        {
+            return new object[] { new TestConfig1() { Field1 = 1, Field2 = "2", Field3 = 3f } };
+        }
+
+        private IEnumerable<Column> _ReturnColumn3(CallInfo arg)
+        {
+            return new Column[] { new Column("Field1", "1")};
         }
 
         private IEnumerable<Column> _ReturnColumn2(CallInfo arg)

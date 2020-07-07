@@ -54,7 +54,17 @@ namespace Regulus.RelationalTables
             {
                 return table.Instances.Cast<T>();
             }
-            return (new object[] { }).Cast<T>();
+            return (new object[0]).Cast<T>();
+        }
+
+        IEnumerable<object> ITableFindable.Find(Type type)
+        {
+            Table table;
+            if (_Tables.TryGetValue(type, out table))
+            {
+                return table.Instances;
+            }
+            return (new object[0]);
         }
     }
 }

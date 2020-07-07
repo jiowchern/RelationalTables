@@ -6,7 +6,11 @@ using System.Runtime.InteropServices;
 
 namespace Regulus.RelationalTables
 {
-    
+    public interface IRelatable
+    {
+        bool Compare(string val);
+    }
+
     public class FieldValue
     {
         private readonly FieldInfo _Field;
@@ -30,7 +34,28 @@ namespace Regulus.RelationalTables
             {
                 return instance;
             }
+            if (_TryRelation(out instance))
+            {
+                return instance;
+            }
             return _CreateNormal();
+        }
+
+        private bool _TryRelation(out object instance)
+        {
+
+            
+            var colValue = (from col in _Row.GetColumns() where col.Name == _Field.Name select col.Value).Single();
+
+
+            var rows = from row in _Finder.Find(_Field.FieldType) 
+                       let relatable = row as IRelatable
+                       where relatable.Compare(colValue)
+                       select row;
+
+
+            instance = rows.FirstOrDefault();
+            return rows.Any();
         }
 
         private bool _TryCreateArray(out object instance)
