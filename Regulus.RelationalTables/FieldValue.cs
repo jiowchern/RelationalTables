@@ -6,19 +6,15 @@ using System.Runtime.InteropServices;
 
 namespace Regulus.RelationalTables
 {
-    public interface IRelatable
-    {
-        bool Compare(string val);
-    }
 
     public class FieldValue
     {
         private readonly FieldInfo _Field;
-        private readonly IRowQueryable _Row;
+        private readonly IColumnProvidable _Row;
         private readonly ITableFindable _Finder;
 
         public readonly object Instance;
-        public FieldValue(FieldInfo field, IRowQueryable row, ITableFindable findable)
+        public FieldValue(FieldInfo field, IColumnProvidable row, ITableFindable findable)
         {
 
             this._Field = field;

@@ -12,7 +12,7 @@ namespace Regulus.RelationalTables
             Fields = fields;
         }
 
-        internal object Create(FieldInfo field, IRowQueryable row)
+        internal object Create(FieldInfo field, IColumnProvidable row)
         {
             var instance = System.Array.CreateInstance(field.FieldType.GetElementType(), Fields.Length);
 

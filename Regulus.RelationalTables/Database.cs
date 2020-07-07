@@ -12,13 +12,13 @@ namespace Regulus.RelationalTables
     public class Database : ITableFindable
     {
         readonly System.Collections.Generic.Dictionary<Type, Table> _Tables;
-        public Database(params Raw.ITableQueryable[] queryables)
+        public Database(params Raw.IRowProvidable[] queryables)
         {
             _Tables = new Dictionary<Type, Table>();
             _Build(_Sort(queryables));
         }
 
-        private IEnumerable<ITableQueryable> _Sort(ITableQueryable[] queryables)
+        private IEnumerable<IRowProvidable> _Sort(IRowProvidable[] queryables)
         {
             var sorter = new RelationalTables.Raw.RelationSorter(queryables.Select(q => q.GetTableType()));
             foreach(var t in sorter.Types)
@@ -27,7 +27,7 @@ namespace Regulus.RelationalTables
             }
         }
 
-        private Dictionary<Type, Table> _Build(IEnumerable<Raw.ITableQueryable>  queryables)
+        private Dictionary<Type, Table> _Build(IEnumerable<Raw.IRowProvidable>  queryables)
         {
             var table = _Tables;
             foreach (var queryable in queryables)
@@ -37,7 +37,7 @@ namespace Regulus.RelationalTables
             return table;
         }
 
-        private Table _Create(Raw.ITableQueryable queryable)
+        private Table _Create(Raw.IRowProvidable queryable)
         {
             var type = queryable.GetTableType();
 
