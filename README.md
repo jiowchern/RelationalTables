@@ -1,5 +1,6 @@
 # Relational Tables
-A common data table creation tool for the game industry.
+[![Maintainability](https://api.codeclimate.com/v1/badges/bdd76b4da517a29323bf/maintainability)](https://codeclimate.com/github/jiowchern/RelationalTables/maintainability)  
+
 
 ## Introduce
 Often, working in the game industry requires that the game designer take edit of the game configuration.  
@@ -12,7 +13,7 @@ If you have a table like it.
 |-|-|-|
 |1|2|3|  
 
-Define a type.
+Define the class.
 ```csharp
 public class TestConfig1 
 {        
@@ -23,7 +24,7 @@ public class TestConfig1
 ```
 Query from database.
 ```csharp
-var db = new Regulus.RelationalTables.Database(new ITableQueryable[] { /*Data source ...*/ });
+var db = new Regulus.RelationalTables.Database(new IRowProvidable[] { /*Data source ...*/ });
 var config = db.Query<TestConfig1>().First();
 // config.Field1 == 1
 // config.Field2 == "2"
@@ -102,11 +103,11 @@ public class TableB
 Whether you are using Excel, CSV, Google Sheet, or another spreadsheet source, you just need to implement the following interface...  
 
 
-**Table provider**  
+**Row provider**  
 ```csharp
 namespace Regulus.RelationalTables.Raw
 {
-    public interface ITableProvidable
+    public interface IRowProvidable
     {
         Type GetTableType();
         IEnumerable<IColumnProvidable> GetRows();
@@ -125,7 +126,7 @@ namespace Regulus.RelationalTables.Raw
 ```
 **New a database**
 ```csharp
-var db = new Regulus.RelationalTables.Database(/* ITableProvidable */);
+var db = new Regulus.RelationalTables.Database(/* IRowProvidable */);
 ```
 
 
