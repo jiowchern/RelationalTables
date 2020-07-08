@@ -44,6 +44,8 @@ namespace Regulus.RelationalTables.Tests
         public ENUM Field1;
     }
 
+   
+
 
 
     public class DatabaseTests
@@ -186,5 +188,7 @@ namespace Regulus.RelationalTables.Tests
             Assert.AreEqual(typeof(TestConfig3), sorter.Types[1]);
 
         }
-}
+
+
+    }
 }

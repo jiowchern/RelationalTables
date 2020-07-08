@@ -26,7 +26,7 @@ namespace Regulus.RelationalTables
         private object _Create()
         {
             object instance;
-            if(_TryCreateArray(out instance))
+            if(_TryArray(out instance))
             {
                 return instance;
             }
@@ -34,26 +34,37 @@ namespace Regulus.RelationalTables
             {
                 return instance;
             }
-            return _CreateNormal();
+            return _Default();
         }
 
         private bool _TryRelation(out object instance)
         {
             instance = null;
+            if (!_Field.FieldType.GetInterfaces().Where(i => i == typeof(IRelatable)).Any())
+                return false;
             var rows = from row in _Finder.FindRows(_Field.FieldType) select row;
             if (!rows.Any())
                 return false;
+
             var colValue = (from col in _Row.GetColumns() where col.Name == _Field.Name select col.Value).Single();
             var relatableRows = from row in rows
                        let relatable = row as IRelatable
                        where relatable.Compare(colValue)
                        select row;
 
-            instance = relatableRows.FirstOrDefault();
-            return rows.Any();
+            try
+            {
+                instance = relatableRows.Single();
+                return true;
+            }
+            catch (System.InvalidOperationException ioe)
+            {               
+                throw new Exception($"No related type was found. Type:{_Field.DeclaringType.FullName} Related Type:{_Field.FieldType.FullName} Key:{colValue}",ioe );
+            }
+            
         }
 
-        private bool _TryCreateArray(out object instance)
+        private bool _TryArray(out object instance)
         {
 
             instance = null;
@@ -67,7 +78,7 @@ namespace Regulus.RelationalTables
             return true;
         }
 
-        private object _CreateNormal()
+        private object _Default()
         {
             var fieldName = _Field.Name;
             var values = from col in _Row.GetColumns() where col.Name == fieldName select col.Value;
