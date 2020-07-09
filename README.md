@@ -56,7 +56,7 @@ public class TestConfig1
 ```csharp
 public class TestConfig1 
 { 
-    [Regulus.RelationalTables.Array("Field1","Field2","Field3")]       
+    [Regulus.RelationalTables.Attributes.Merge("Field1","Field2","Field3")]       
     public int[] Field;    
 }
 ```
@@ -97,6 +97,23 @@ public class TableB
 {        
     public int Field1;
     public TestConfig1 Field2;    
+}
+```
+**Custom Parser**
+
+```csharp
+public class CustomFieldParser : Regulus.RelationalTables.Attributes.FieldParser
+{
+    public override object Parse(FieldInfo field, IEnumerable<Column> row, ITableable table)
+    {
+        //todo : Implement your method... 
+    }
+}
+
+public class Table
+{
+    [CustomFieldParser()]
+    public int Field1;        
 }
 ```
 ### Create database

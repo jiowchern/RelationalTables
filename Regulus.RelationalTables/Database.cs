@@ -5,11 +5,9 @@ using System.Linq;
 
 namespace Regulus.RelationalTables
 {
-    namespace Raw
-    {
-    }
     
-    public class Database : ITableFindable
+    
+    public class Database : ITableable
     {
         readonly System.Collections.Generic.Dictionary<Type, Table> _Tables;
         public Database(params Raw.IRowProvidable[] queryables)
@@ -67,14 +65,21 @@ namespace Regulus.RelationalTables
             return (new object[0]).Cast<T>();
         }
 
-        IEnumerable<object> ITableFindable.FindRows(Type type)
+        IEnumerable<IRelatable> ITableable.FindRelatables(Type type)
         {
             Table table;
             if (_Tables.TryGetValue(type, out table))
             {
-                return table.Instances;
+                return from row in table.Instances let relatable = row as IRelatable
+                       where relatable != null 
+                       select relatable;
             }
-            return (new object[0]);
+            return (new IRelatable[0]);
+        }
+
+        IEnumerable<T> ITableable.FindRows<T>()
+        {            
+            return Query<T>();
         }
     }
 }

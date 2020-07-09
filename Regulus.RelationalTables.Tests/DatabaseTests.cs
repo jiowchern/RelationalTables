@@ -1,10 +1,10 @@
 using NSubstitute;
-using NSubstitute.Core;
 using NUnit.Framework;
 using Regulus.RelationalTables.Raw;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Regulus.RelationalTables.Tests
 {
@@ -29,7 +29,7 @@ namespace Regulus.RelationalTables.Tests
 
     public class TestConfig2
     {
-        [Regulus.RelationalTables.Array("Field10", "Field11", "Field12")]   
+        [Regulus.RelationalTables.Attributes.Merge("Field10", "Field11", "Field12")]   
         public int[] Field1;
     }
 
@@ -43,21 +43,30 @@ namespace Regulus.RelationalTables.Tests
         public enum ENUM { A,B,C}
         public ENUM Field1;
     }
-
-   
-
-
-
+    public class CustomFieldParser : Regulus.RelationalTables.Attributes.FieldParser
+    {
+        public override object Parse(FieldInfo field, IEnumerable<Column> row, ITableable table)
+        {
+            var col = row.Single(c => c.Name == nameof(TestConfig5.Field1));
+            if (col.Value == "AAA")
+                return 1;
+            return 0;
+        }
+    }
+    public class TestConfig5
+    {
+        [CustomFieldParser()]
+        public int Field1;        
+    }
     public class DatabaseTests
     {
-        
 
         [Test]
         public void DatabaseQueryTest()
         {
             
             var config1Row1 = NSubstitute.Substitute.For<IColumnProvidable>(); ;
-            config1Row1.GetColumns().Returns(_ReturnColumn1);
+            config1Row1.GetColumns().Returns(DataProvider._ReturnColumn1);
 
             var config1 = NSubstitute.Substitute.For<IRowProvidable>();
             config1.GetRows().Returns( new IColumnProvidable[] { config1Row1 } );
@@ -75,7 +84,7 @@ namespace Regulus.RelationalTables.Tests
         {
 
             var config1Row1 = NSubstitute.Substitute.For<IColumnProvidable>(); ;
-            config1Row1.GetColumns().Returns(_ReturnColumn1);
+            config1Row1.GetColumns().Returns(DataProvider._ReturnColumn1);
 
             var config1 = NSubstitute.Substitute.For<IRowProvidable>();
             config1.GetRows().Returns(new IColumnProvidable[] { config1Row1 });
@@ -83,7 +92,7 @@ namespace Regulus.RelationalTables.Tests
 
 
             var config1Row3 = NSubstitute.Substitute.For<IColumnProvidable>(); ;
-            config1Row3.GetColumns().Returns(_ReturnColumn3);
+            config1Row3.GetColumns().Returns(DataProvider._ReturnColumn3);
 
             var config3 = NSubstitute.Substitute.For<IRowProvidable>();
             config3.GetRows().Returns(new IColumnProvidable[] { config1Row3 });
@@ -96,87 +105,9 @@ namespace Regulus.RelationalTables.Tests
             Assert.AreEqual(3f, config.Field1.Field3);
         }
 
-        [Test]
-        public void FieldValueTest()
-        {
-            var table = NSubstitute.Substitute.For<ITableFindable>();
-            var type = typeof(TestConfig1);
-            var field = type.GetField(nameof(TestConfig1.Field1));
-            var row = NSubstitute.Substitute.For<IColumnProvidable>();
-            row.GetColumns().Returns( _ReturnColumn1 );
-            var val = new Regulus.RelationalTables.FieldValue(field , row , table);
-
-            Assert.AreEqual(1 , val.Instance);
-        }
-        [Test]
-        public void FieldValueEnumTest()
-        {
-            var table = NSubstitute.Substitute.For<ITableFindable>();
-            var type = typeof(TestConfig4);
-            var field = type.GetField(nameof(TestConfig4.Field1));
-            var row = NSubstitute.Substitute.For<IColumnProvidable>();
-            row.GetColumns().Returns(_ReturnColumn4);
-            var val = new Regulus.RelationalTables.FieldValue(field, row, table);
-
-            Assert.AreEqual(TestConfig4.ENUM.A, val.Instance);
-        }
-
-            [Test]
-        public void FieldValueArrayTest()
-        {
-
-            var type = typeof(TestConfig2);
-            var field = type.GetField(nameof(TestConfig2.Field1));
-            var row = NSubstitute.Substitute.For<IColumnProvidable>();
-            row.GetColumns().Returns(_ReturnColumn2);
-            var val = new Regulus.RelationalTables.FieldValue(field, row, null);
-            var values = val.Instance as int[];
-            Assert.AreEqual(1, values[0]);
-            Assert.AreEqual(2, values[1]);
-            Assert.AreEqual(3, values[2]);
-        }
-
-        [Test]
-        public void FieldValueRelationTest()
-        {
-            var table = NSubstitute.Substitute.For<ITableFindable>();
-            table.FindRows(NSubstitute.Arg.Is(typeof(TestConfig1))).Returns(_ReturnTestConfig1 );
-            var type = typeof(TestConfig3);
-            var field = type.GetField(nameof(TestConfig3.Field1));
-            var row = NSubstitute.Substitute.For<IColumnProvidable>();
-            row.GetColumns().Returns(_ReturnColumn3);
-            var val = new Regulus.RelationalTables.FieldValue(field, row, table);
-            var config1 = val.Instance as TestConfig1;
-            Assert.AreEqual(1, config1.Field1);
-            Assert.AreEqual("2", config1.Field2);
-            Assert.AreEqual(3f, config1.Field3);
-        }
-
-        private IEnumerable<object> _ReturnTestConfig1(CallInfo arg)
-        {
-            return new object[] { new TestConfig1() { Field1 = 1, Field2 = "2", Field3 = 3f } };
-        }
-
-        private IEnumerable<Column> _ReturnColumn3(CallInfo arg)
-        {
-            return new Column[] { new Column("Field1", "1")};
-        }
-
-        private IEnumerable<Column> _ReturnColumn4(CallInfo arg)
-        {
-            return new Column[] { new Column("Field1", "A") };
-        }
-
-        private IEnumerable<Column> _ReturnColumn2(CallInfo arg)
-        {
-            return new Column[] { new Column("Field10", "1"), new Column("Field11", "2"), new Column("Field12", "3") };
-        }
-
-        private IEnumerable<Column> _ReturnColumn1(CallInfo arg)
-        {
-            return new Column[] { new Column(nameof(TestConfig1.Field1) , "1") , new Column(nameof(TestConfig1.Field2), "2") , new Column(nameof(TestConfig1.Field3), "3") };
-        }
-
+        
+       
+    
 
         [Test]
         public void TypeSortTest()

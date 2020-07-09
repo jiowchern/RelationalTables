@@ -8,6 +8,7 @@ namespace Regulus.RelationalTables
         {
             public readonly string Name;
             public readonly string Value;
+            
             public Column(string name , string value)
             {
                 Name = name;

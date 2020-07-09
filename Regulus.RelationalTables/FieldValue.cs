@@ -1,8 +1,9 @@
-﻿using Regulus.RelationalTables.Raw;
+﻿using Regulus.RelationalTables.Attributes;
+using Regulus.RelationalTables.Raw;
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
+
 
 namespace Regulus.RelationalTables
 {
@@ -11,10 +12,10 @@ namespace Regulus.RelationalTables
     {
         private readonly FieldInfo _Field;
         private readonly IColumnProvidable _Row;
-        private readonly ITableFindable _Finder;
+        private readonly ITableable _Finder;
 
         public readonly object Instance;
-        public FieldValue(FieldInfo field, IColumnProvidable row, ITableFindable findable)
+        public FieldValue(FieldInfo field, IColumnProvidable row, ITableable findable)
         {
 
             this._Field = field;
@@ -25,32 +26,32 @@ namespace Regulus.RelationalTables
 
         private object _Create()
         {
+            var parser = _Field.GetCustomAttribute<Regulus.RelationalTables.Attributes.FieldParser>(true);
+            if(parser !=null)
+            {
+                return parser.Parse(_Field, _Row.GetColumns(), _Finder);
+            }
             object instance;
-            if(_TryArray(out instance))
-            {
-                return instance;
-            }
             if (_TryRelation(out instance))
-            {
                 return instance;
-            }
             return _Default();
         }
+
+       
 
         private bool _TryRelation(out object instance)
         {
             instance = null;
             if (!_Field.FieldType.GetInterfaces().Where(i => i == typeof(IRelatable)).Any())
                 return false;
-            var rows = from row in _Finder.FindRows(_Field.FieldType) select row;
+            var rows = from row in _Finder.FindRelatables(_Field.FieldType) select row;
             if (!rows.Any())
                 return false;
 
             var colValue = (from col in _Row.GetColumns() where col.Name == _Field.Name select col.Value).Single();
-            var relatableRows = from row in rows
-                       let relatable = row as IRelatable
+            var relatableRows = from relatable in rows                       
                        where relatable.Compare(colValue)
-                       select row;
+                       select relatable;
 
             try
             {
@@ -64,22 +65,10 @@ namespace Regulus.RelationalTables
             
         }
 
-        private bool _TryArray(out object instance)
-        {
-
-            instance = null;
-            if (!_Field.FieldType.IsArray)
-                return false;
-            var array = _Field.GetCustomAttributes<Regulus.RelationalTables.Array>().FirstOrDefault() ;
-            if (array == null)
-                return false;
-
-            instance = array.Create(_Field,_Row);
-            return true;
-        }
-
         private object _Default()
         {
+            
+
             var fieldName = _Field.Name;
             var values = from col in _Row.GetColumns() where col.Name == fieldName select col.Value;
             var value = values.FirstOrDefault();

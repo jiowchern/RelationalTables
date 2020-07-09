@@ -3,8 +3,10 @@ using System.Collections.Generic;
 
 namespace Regulus.RelationalTables
 {
-    public interface ITableFindable
+    public interface ITableable
     {
-        IEnumerable<object> FindRows(Type fieldType);
+        IEnumerable<IRelatable> FindRelatables(Type type);
+        IEnumerable<T> FindRows<T>();
+
     }
 }
