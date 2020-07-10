@@ -48,7 +48,11 @@ namespace Regulus.RelationalTables
             if (!rows.Any())
                 return false;
 
-            var colValue = (from col in _Row.GetColumns() where col.Name == _Field.Name select col.Value).Single();
+            var colValue = (from col in _Row.GetColumns() where col.Name == _Field.Name select col.Value).FirstOrDefault();
+            if(colValue == null)
+            {
+                return false;
+            }
             var relatableRows = from relatable in rows                       
                        where relatable.Compare(colValue)
                        select relatable;
