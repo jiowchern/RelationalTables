@@ -50,8 +50,10 @@ namespace Regulus.RelationalTables.Tests
 
     public class TestSortConfig2
     {
+        
         public TestSortConfig1 Field1;
         public TestSortConfig1 Field2;
+        public TestSortConfig2 Field3;
     }
 
     public class TestSortConfig3

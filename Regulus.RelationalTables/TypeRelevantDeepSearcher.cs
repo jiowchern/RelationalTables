@@ -24,7 +24,7 @@ namespace Regulus.RelationalTables
 
         private int _GetLevel(int level, Type type)
         {
-            var fields = from field in type.GetFields() where _Types.Any(t => t == field.FieldType) select field;
+            var fields = from field in type.GetFields() where _Types.Any(t => type != field.FieldType && t == field.FieldType) select field;
 
             var maxLevel = level;
             foreach (var f in fields)
