@@ -5,11 +5,11 @@
         public class RelationSorterTable
         {
             public int Priority;
-            public readonly System.Type Queryable;
+            public readonly System.Type Type;
 
-            public RelationSorterTable(System.Type queryable)
+            public RelationSorterTable(System.Type Type)
             {
-                Queryable = queryable;
+                this.Type = Type;
             }
         }
     }
