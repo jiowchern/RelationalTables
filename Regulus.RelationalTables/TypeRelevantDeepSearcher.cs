@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace Regulus.RelationalTables
@@ -24,7 +25,10 @@ namespace Regulus.RelationalTables
 
         private int _GetLevel(int level, Type type)
         {
-            var fields = from field in type.GetFields() where _Types.Any(t => type != field.FieldType && t == field.FieldType) select field;
+            
+            var fields = from field in type.GetFields() 
+                         let fieldType = _GetFieldType(field)
+                         where _Types.Any(t => type != fieldType && t == fieldType) select field;
 
             var maxLevel = level;
             foreach (var f in fields)
@@ -37,6 +41,13 @@ namespace Regulus.RelationalTables
             }
 
             return maxLevel;
+        }
+
+        private Type _GetFieldType(FieldInfo field)
+        {
+            if (field.FieldType.HasElementType)
+                return field.FieldType.GetElementType();
+            return field.FieldType;
         }
     }
 }

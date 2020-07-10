@@ -1,6 +1,6 @@
 # Relational Tables
 [![Maintainability](https://api.codeclimate.com/v1/badges/bdd76b4da517a29323bf/maintainability)](https://codeclimate.com/github/jiowchern/RelationalTables/maintainability)  
-
+A simple game development spreadsheet conversion tool.  
 
 ## Introduce
 Often, working in the game industry requires that the game designer take edit of the game configuration.  
@@ -99,6 +99,43 @@ public class TableB
     public TestConfig1 Field2;    
 }
 ```
+**Inversely related**  
+Table A
+
+|Table2s|
+|-|
+|1|  
+
+Table B
+
+|Owner|Data|
+|-|-|
+|1|1|
+|1|2|
+```csharp
+class Table1
+{            
+    [Attributes.InverselyRelated]
+    public Table2[] Table2s;
+}
+
+class Table2 : IRelatable
+{
+    public int Owner;
+    public int Data;
+    bool IRelatable.Compare(string val)
+    {
+        int owner;
+        if (int.TryParse(val , out owner))
+        {
+            return owner == Owner;
+        }
+        return false;
+    }
+}
+```
+
+
 **Custom Parser**
 
 ```csharp

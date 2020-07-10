@@ -43,23 +43,7 @@ namespace Regulus.RelationalTables.Tests
         public enum ENUM { A,B,C}
         public ENUM Field1;
     }
-
-    public class TestSortConfig1
-    {        
-    }
-
-    public class TestSortConfig2
-    {
-        
-        public TestSortConfig1 Field1;
-        public TestSortConfig1 Field2;
-        public TestSortConfig2 Field3;
-    }
-
-    public class TestSortConfig3
-    {
-        public TestSortConfig2 Field1;
-    }
+    
     public class CustomFieldParser : Regulus.RelationalTables.Attributes.FieldParser
     {
         public override object Parse(FieldInfo field, IEnumerable<Column> row, ITableable table)
@@ -136,30 +120,8 @@ namespace Regulus.RelationalTables.Tests
             Assert.AreEqual(typeof(TestConfig3), sorter.Types[1]);
 
         }
-
-        [Test]
-        public void TypeSortTest2()
-        {
-            var sorter = new RelationSorter(new Type[] { typeof(TestSortConfig1), typeof(TestSortConfig2) , typeof(TestSortConfig3) });
-
-
-            Assert.AreEqual(typeof(TestSortConfig1), sorter.Types[0]);
-            Assert.AreEqual(typeof(TestSortConfig2), sorter.Types[1]);            
-            Assert.AreEqual(typeof(TestSortConfig3), sorter.Types[2]);
-
-        }
-
-        [Test]
-        public void TypeLevel1()
-        {
-            var level = new TypeRelevantDeepSearcher(new Type[] { typeof(TestSortConfig1), typeof(TestSortConfig2), typeof(TestSortConfig3) });
-
-
-            Assert.AreEqual(0, level.Search(typeof(TestSortConfig1)));
-            Assert.AreEqual(1, level.Search(typeof(TestSortConfig2)));
-            Assert.AreEqual(2, level.Search(typeof(TestSortConfig3)));
-
-        }
+        
+       
 
 
     }
