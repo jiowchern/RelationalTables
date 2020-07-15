@@ -135,6 +135,42 @@ class Table2 : IRelatable
 }
 ```
 
+**Inversely related by column**  
+Table A
+
+|Id|
+|-|
+|1|  
+
+Table B
+
+|Owner|Data|
+|-|-|
+|1|1|
+|1|2|
+```csharp
+class Table1
+{            
+    [Attributes.InverselyRelatedByColumn("Id")]
+    public Table2[] Table2s;
+}
+
+class Table2 : IRelatable
+{
+    public int Owner;
+    public int Data;
+    bool IRelatable.Compare(string val)
+    {
+        int owner;
+        if (int.TryParse(val , out owner))
+        {
+            return owner == Owner;
+        }
+        return false;
+    }
+}
+```
+
 
 **Custom Parser**
 

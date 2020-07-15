@@ -6,25 +6,31 @@ using System.Reflection;
 
 namespace Regulus.RelationalTables.Attributes
 {
-    public class InverselyRelated : FieldParser
+    public class InverselyRelatedByColumn : FieldParser
     {
-        
+        private readonly string _Column;
+
+        public InverselyRelatedByColumn(string column)
+        {
+            this._Column = column;
+        }
         public override object Parse(FieldInfo field, IEnumerable<Column> row, ITableable table)
         {
-            var col = row.FirstOrDefault( c=>c.Name == field.Name);
-            if(col.Value == null)
+            var colVal = row.FirstOrDefault(c => c.Name == _Column).Value;
+            if (colVal == null)
             {
                 return null;
             }
+
             if (!field.FieldType.HasElementType)
                 return false;
             var elementType = field.FieldType.GetElementType();
-            var relatables = table.FindRelatables(elementType).Where(r => r.Compare(col.Value)).ToArray();
+            var relatables = table.FindRelatables(elementType).Where(r => r.Compare(colVal)).ToArray();
             var length = relatables.Length;
             var val = Array.CreateInstance(elementType, length) as System.Array;
             for (int i = 0; i < length; i++)
             {
-                val.SetValue(relatables[i],i);
+                val.SetValue(relatables[i], i);
             }
             return val;
         }
