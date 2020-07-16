@@ -6,7 +6,7 @@ A simple game development spreadsheet conversion tool.
 Often, working in the game industry requires that the game designer take edit of the game configuration.  
 However, the difficulty of facing various data table-read associations was the reason for the creation of this tool.
 
-## How to use
+## Usage
 If you have a table like it.
 
 |Field1   |Field2   |Field3   |
