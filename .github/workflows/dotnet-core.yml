@@ -24,14 +24,13 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-    - name: coverlet
-      uses: b3b00/coverlet-action@1.0.91
-      with:
-        testProject: 'Regulus.RelationalTables.Tests/Regulus.RelationalTables.Tests.csproj'
+      run: |
+        dotnet test --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov --results-directory:/tests
+        move Regulus.RelationalTables.Tests/TestResults/*/coverage.info .
+    
     - name: Coveralls GitHub Action
       uses: coverallsapp/github-action@v1.1.1
       with:         
         github-token: ${{ secrets.CODECOV_TOKEN }}
-        path-to-lcov: ${{steps.coverlet.outputs.coverageFile}} 
+        path-to-lcov: coverage.info
 
