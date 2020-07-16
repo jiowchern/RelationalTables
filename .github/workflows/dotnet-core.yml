@@ -25,7 +25,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: |
-        dotnet test --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov --results-directory:/tests
+        dotnet test --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile=RegulusLibrary/**/*.cs
         move Regulus.RelationalTables.Tests/TestResults/*/coverage.info .
     
     - name: Coveralls GitHub Action
