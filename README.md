@@ -113,13 +113,13 @@ Table B
 |1|1|
 |1|2|
 ```csharp
-class Table1
+class TableA
 {            
     [Attributes.InverselyRelated]
-    public Table2[] Table2s;
+    public TableB[] Table2s;
 }
 
-class Table2 : IRelatable
+class TableB : IRelatable
 {
     public int Owner;
     public int Data;
@@ -149,13 +149,13 @@ Table B
 |1|1|
 |1|2|
 ```csharp
-class Table1
+class TableA
 {            
     [Attributes.InverselyRelatedByColumn("Id")]
-    public Table2[] Table2s;
+    public TableB[] Table2s;
 }
 
-class Table2 : IRelatable
+class TableB : IRelatable
 {
     public int Owner;
     public int Data;
