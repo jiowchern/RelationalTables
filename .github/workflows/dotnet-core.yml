@@ -28,8 +28,6 @@ jobs:
     - name: coverlet
       uses: b3b00/coverlet-action@1.0.91
       with:
-        output: 'Regulus.RelationalTables.Tests/lcov.info'
-        outputFormat: 'lcov'
         testProject: 'Regulus.RelationalTables.Tests/Regulus.RelationalTables.Tests.csproj'
     - name: Coveralls GitHub Action
       uses: coverallsapp/github-action@v1.1.1
