@@ -25,10 +25,20 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-      
+    - name: Coverlet coverage test
+      uses: b3b00/coverlet-action@1.0.91
+      with:
+          # output filename
+        output: './lcov.info'
+          # output format : lcov, json, opencover, corbertura, temacity (see coverlet documentation)
+        #outputFormat: # default is lcov
+          # assemblies, namespances exclusions (see coverlet documentation)
+        #excludes: # optional
+          # path to unit test project from repository root
+        testProject: './Regulus.RelationalTables.Tests/Regulus.RelationalTables.Tests.csproj'
     - name: Coveralls GitHub Action
       uses: coverallsapp/github-action@v1.1.1
       with:         
         github-token: ${{ secrets.CODECOV_TOKEN }}
-        path-to-lcov : "**/coverage.info"
+        path-to-lcov : "./lcov.info"
 
