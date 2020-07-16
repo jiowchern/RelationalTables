@@ -1,7 +1,7 @@
 # Relational Tables
 [![Maintainability](https://api.codeclimate.com/v1/badges/bdd76b4da517a29323bf/maintainability)](https://codeclimate.com/github/jiowchern/RelationalTables/maintainability)
 [![Coverage Status](https://coveralls.io/repos/github/jiowchern/RelationalTables/badge.svg?branch=master)](https://coveralls.io/github/jiowchern/RelationalTables?branch=master)
-[![Actions Status](https://github.com/jiowchern/RelationalTables/workflows/.NET%20Core/badge.svg)](https://github.com/{owner}/{repo}/actions)  
+[![Actions Status](https://github.com/jiowchern/RelationalTables/workflows/Build/badge.svg)](https://github.com/{owner}/{repo}/actions)  
 
 A simple game development spreadsheet conversion tool.  
 
