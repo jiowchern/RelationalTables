@@ -6,7 +6,7 @@ A simple game development spreadsheet conversion tool.
 Often, working in the game industry requires that the game designer take edit of the game configuration.  
 However, the difficulty of facing various data table-read associations was the reason for the creation of this tool.
 
-## How to use
+## Usage
 If you have a table like it.
 
 |Field1   |Field2   |Field3   |
@@ -113,13 +113,13 @@ Table B
 |1|1|
 |1|2|
 ```csharp
-class Table1
+class TableA
 {            
     [Attributes.InverselyRelated]
-    public Table2[] Table2s;
+    public TableB[] Table2s;
 }
 
-class Table2 : IRelatable
+class TableB : IRelatable
 {
     public int Owner;
     public int Data;
@@ -149,13 +149,13 @@ Table B
 |1|1|
 |1|2|
 ```csharp
-class Table1
+class TableA
 {            
     [Attributes.InverselyRelatedByColumn("Id")]
-    public Table2[] Table2s;
+    public TableB[] Table2s;
 }
 
-class Table2 : IRelatable
+class TableB : IRelatable
 {
     public int Owner;
     public int Data;
