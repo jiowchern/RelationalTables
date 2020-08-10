@@ -76,10 +76,38 @@ namespace Regulus.RelationalTables
             var fieldName = _Field.Name;
             var values = from col in _Row.GetColumns() where col.Name == fieldName select col.Value;
             var value = values.FirstOrDefault();
-            if (value == null)
-                value = string.Empty;
+
+            if (_Field.FieldType == typeof(string))
+            {
+                if (value != null)
+                    return value;
+                return "";
+            }
+
+            if (string.IsNullOrWhiteSpace(value) || string.IsNullOrEmpty(value))
+            {
+                if(_Field.FieldType != typeof(string))
+                {
+                    return _GetDefaultValue(_Field.FieldType);
+                }
+                else
+                {
+                    return string.Empty;
+                }
+
+            }            
+
             return Regulus.Utility.ValueHelper.StringConvert(_Field.FieldType, value);            
             
+        }
+
+        private static object _GetDefaultValue(Type type)
+        {
+            if (type.IsValueType)
+            {
+                return Activator.CreateInstance(type);
+            }
+            return null;
         }
     }
 }
