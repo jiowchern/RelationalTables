@@ -21,9 +21,10 @@ namespace Regulus.RelationalTables.Attributes
             for (int i = 0; i < _Fields.Length; i++)
             {
                 var col = _Fields[i];
-                var column = row.FirstOrDefault(c => c.Name == col);                
-                var val = Regulus.Utility.ValueHelper.StringConvert(field.FieldType.GetElementType(), column.Value);
-                instance.SetValue(val, i);
+                var column = row.FirstOrDefault(c => c.Name == col);
+
+                var converter = System.ComponentModel.TypeDescriptor.GetConverter(field.FieldType.GetElementType());               
+                instance.SetValue(converter.ConvertFromString(column.Value), i);
             }
             return instance;
         }

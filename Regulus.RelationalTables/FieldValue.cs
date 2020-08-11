@@ -97,8 +97,14 @@ namespace Regulus.RelationalTables
 
             }            
 
-            return Regulus.Utility.ValueHelper.StringConvert(_Field.FieldType, value);            
+            return _StringConvert(_Field.FieldType, value);            
             
+        }
+
+        private object _StringConvert(Type fieldType, string value)
+        {
+            var converter = System.ComponentModel.TypeDescriptor.GetConverter(fieldType);            
+            return converter.ConvertFromString(value);
         }
 
         private static object _GetDefaultValue(Type type)
