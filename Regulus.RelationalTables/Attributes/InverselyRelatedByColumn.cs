@@ -23,7 +23,18 @@ namespace Regulus.RelationalTables.Attributes
             }
 
             if (!field.FieldType.HasElementType)
-                return false;
+                return _CreateOne(field, table, colVal);
+            return _CreateArray(field, table, colVal);
+        }
+
+        private object _CreateOne(FieldInfo field, ITableable table, string colVal)
+        {
+            var elementType = field.FieldType;
+            return table.FindRelatables(elementType).Where(r => r.Compare(colVal)).SingleOrDefault();            
+        }
+
+        private static object _CreateArray(FieldInfo field, ITableable table, string colVal)
+        {
             var elementType = field.FieldType.GetElementType();
             var relatables = table.FindRelatables(elementType).Where(r => r.Compare(colVal)).ToArray();
             var length = relatables.Length;
