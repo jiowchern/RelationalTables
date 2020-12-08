@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -18,26 +19,22 @@ namespace Regulus.RelationalTables
 
         }
         public int Search(Type type)
-        {
-            
+        {            
             return _GetLevel(0 , type);
         }
 
         private int _GetLevel(int level, Type type)
         {
-            
-            var fields = from field in type.GetFields() 
-                         let fieldType = _GetFieldType(field)
-                         where _Types.Any(t => type != fieldType && t == fieldType) select field;
+            var types = from field in type.GetFields()
+                        let fieldType = _GetFieldType(field)
+                        where _Types.Any(t => type != fieldType && fieldType == t)
+                        select fieldType;
 
-            var maxLevel = level;
-            foreach (var f in fields)
+            int maxLevel = level;
+
+            foreach(var tableType in types)
             {
-                var l = _GetLevel(level+1 , f.FieldType);
-                if(maxLevel < l)
-                {
-                    maxLevel = l;
-                }
+                maxLevel = _GetLevel(level + 1, tableType);
             }
 
             return maxLevel;
@@ -49,5 +46,7 @@ namespace Regulus.RelationalTables
                 return field.FieldType.GetElementType();
             return field.FieldType;
         }
+
+        
     }
 }
