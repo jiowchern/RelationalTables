@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="NSubstitute" Version="4.2.2" />
     <PackageReference Include="nunit" Version="3.12.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.0.0-beta.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.0" />
     <!-- Update this reference when new version is released -->
     <PackageReference Include="coverlet.collector" Version="1.3.0">

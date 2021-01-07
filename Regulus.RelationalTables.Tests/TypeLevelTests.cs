@@ -22,6 +22,15 @@ namespace Regulus.RelationalTables.Tests
             public TestSortConfig2 Field1;
         }
 
+        public class TestSortConfig4Inner
+        {
+            public TestSortConfig3 Field1;
+        }
+        public class TestSortConfig4
+        {
+            public TestSortConfig4Inner Field1;
+        }
+
         public class TestSortArray1
         {
             public TestSortArray2[] Field1;
@@ -38,8 +47,8 @@ namespace Regulus.RelationalTables.Tests
             var level = new TypeRelevantDeepSearcher(new Type[] { typeof(TestSortArray1), typeof(TestSortArray2)});
 
 
-            Assert.AreEqual(1, level.Search(typeof(TestSortArray1)));
-            Assert.AreEqual(0, level.Search(typeof(TestSortArray2)));
+            Assert.AreEqual(3, level.Search(typeof(TestSortArray1)));
+            Assert.AreEqual(2, level.Search(typeof(TestSortArray2)));
 
 
         }
@@ -50,9 +59,9 @@ namespace Regulus.RelationalTables.Tests
             var level = new TypeRelevantDeepSearcher(new Type[] { typeof(TestSortConfig1), typeof(TestSortConfig2), typeof(TestSortConfig3) });
 
 
-            Assert.AreEqual(0, level.Search(typeof(TestSortConfig1)));
-            Assert.AreEqual(1, level.Search(typeof(TestSortConfig2)));
-            Assert.AreEqual(2, level.Search(typeof(TestSortConfig3)));
+            Assert.AreEqual(1, level.Search(typeof(TestSortConfig1)));
+            Assert.AreEqual(2, level.Search(typeof(TestSortConfig2)));
+            Assert.AreEqual(3, level.Search(typeof(TestSortConfig3)));
 
         }
 
@@ -67,5 +76,6 @@ namespace Regulus.RelationalTables.Tests
             Assert.AreEqual(typeof(TestSortConfig3), sorter.Types[2]);
 
         }
+       
     }
 }
