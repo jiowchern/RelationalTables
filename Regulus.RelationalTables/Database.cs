@@ -46,6 +46,8 @@ namespace Regulus.RelationalTables
                 var instance = System.Activator.CreateInstance(type);
                 foreach (var field in fields)
                 {
+                    if (field.IsStatic)
+                        continue;
                     var name = field.Name;
                     var val = new FieldValue(field, row , this);
                     field.SetValue(instance, val.Instance);
