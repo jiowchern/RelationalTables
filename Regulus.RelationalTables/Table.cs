@@ -4,13 +4,13 @@ using System.Linq;
 
 namespace Regulus.RelationalTables
 {
-    internal class Table
-    {
-        
+    public class Table
+    {        
         public readonly object[] Instances;
-
-        public Table(IEnumerable<object> instances)
-        {        
+        public readonly Type Type;
+        public Table(Type type,IEnumerable<object> instances)
+        {
+            Type = type;
             this.Instances = instances.ToArray();
         }
     }

@@ -1,6 +1,10 @@
 ﻿
 namespace Regulus.RelationalTables.Tests
 {
+
+    namespace Circulation
+    {
+    }
     public class TypeTreeTests
     {
         public class Type2

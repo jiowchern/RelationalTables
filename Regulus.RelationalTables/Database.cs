@@ -3,16 +3,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+namespace Regulus.RelationalTables.Serialization
+{
+}
 namespace Regulus.RelationalTables
 {
-    
-    
+
+
     public class Database : ITableable
     {
         readonly System.Collections.Generic.Dictionary<Type, Table> _Tables;
+        public readonly IReadOnlyDictionary<Type, Table> Tables;
         public Database(params Raw.IRowProvidable[] queryables)
         {
             _Tables = new Dictionary<Type, Table>();
+            Tables = _Tables;
             _Build(_Sort(queryables));
         }
 
@@ -48,14 +53,14 @@ namespace Regulus.RelationalTables
                 {
                     if (field.IsStatic)
                         continue;
-                    var name = field.Name;
+
                     var val = new FieldValue(field, row , this);
                     field.SetValue(instance, val.Instance);
                 }
                 instances.Add(instance);                
             }
 
-            return new Table(instances);
+            return new Table(type,instances);
         }
 
         public IEnumerable<T> Query<T>()

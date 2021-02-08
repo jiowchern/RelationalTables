@@ -6,9 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+
 namespace Regulus.RelationalTables.Tests
 {
-    public class TestConfig1 : Regulus.RelationalTables.IRelatable
+
+    public struct  TestConfig1 : Regulus.RelationalTables.IRelatable
     {
         
         public int Field1;
@@ -27,18 +29,18 @@ namespace Regulus.RelationalTables.Tests
         }
     }
 
-    public class TestConfig2
+    public struct TestConfig2
     {
         [Regulus.RelationalTables.Attributes.Merge("Field10", "Field11", "Field12")]   
         public int[] Field1;
     }
 
-    public class TestConfig3
+    public struct TestConfig3
     {        
         public TestConfig1 Field1;
     }
 
-    public class TestConfig4
+    public struct TestConfig4
     {
         public enum ENUM { A,B,C}
         public ENUM Field1;
@@ -54,18 +56,19 @@ namespace Regulus.RelationalTables.Tests
             return 0;
         }
     }
-    public class TestConfig5
+    public struct TestConfig5
     {
         [CustomFieldParser()]
         public int Field1;        
     }
     public class DatabaseTests
     {
+        
 
-        [Test]
+            [Test]
         public void DatabaseQueryTest()
         {
-            
+
             var config1Row1 = NSubstitute.Substitute.For<IColumnProvidable>(); ;
             config1Row1.GetColumns().Returns(DataProvider._ReturnColumn1);
 

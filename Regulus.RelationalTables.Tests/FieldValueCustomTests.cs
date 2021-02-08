@@ -70,7 +70,7 @@ namespace Regulus.RelationalTables.Tests
             var row = NSubstitute.Substitute.For<IColumnProvidable>();
             row.GetColumns().Returns(DataProvider._ReturnColumn3);
             var val = new Regulus.RelationalTables.FieldValue(field, row, table);
-            var config1 = val.Instance as TestConfig1;
+            var config1 = (TestConfig1)val.Instance  ;
             Assert.AreEqual(1, config1.Field1);
             Assert.AreEqual("2", config1.Field2);
             Assert.AreEqual(3f, config1.Field3);
