@@ -223,3 +223,23 @@ var db = new Regulus.RelationalTables.Database(/* IRowProvidable */);
 ```
 
 
+### Serialization
+Because it takes time to set up the database, it is recommended that the tables be serialized at edit time for runtime use.
+
+**Write to stream**
+```csharp
+var stream = // file stream.
+var db = new Regulus.RelationalTables.Database(/* IRowProvidable */);
+var converter = new Regulus.RelationalTables.Serialization.BinaryConverter();
+converter.WriteToStream(db.Tables, stream , /* ITypeProviable */);
+```
+**Read from stream**
+```csharp
+var stream = // file stream.
+var converter = new Regulus.RelationalTables.Serialization.BinaryConverter();
+var tables = converter.ReadFromStream(stream, /* ITypeProviable */);
+var db = new Regulus.RelationalTables.Database(tables);
+```
+**ITypeProviable**  
+Need to implement ```ITypeproViable``` to provide type information.
+

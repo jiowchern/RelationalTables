@@ -100,7 +100,13 @@ namespace Regulus.RelationalTables.Serialization
 
                 foreach (var linker in linkers)
                 {
-                    ((IObjectFieldLinkable)linker).Set();
+                    linker.Set();
+                }
+
+
+                foreach (var linker in linkers)
+                {
+                    linker.Set();
                 }
 
                 return instances.Values;
@@ -220,6 +226,9 @@ namespace Regulus.RelationalTables.Serialization
 
         private IEnumerable<Tuple<Binary.Object, object>> _CreateObject(Type type, object instance, HashSet<object> exist)
         {
+
+            if (instance == null)
+                yield break;
             if (exist.Contains(instance))
                 yield break;
 

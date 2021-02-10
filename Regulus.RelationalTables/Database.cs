@@ -3,9 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Regulus.RelationalTables.Serialization
-{
-}
+
 namespace Regulus.RelationalTables
 {
 
@@ -13,12 +11,18 @@ namespace Regulus.RelationalTables
     public class Database : ITableable
     {
         readonly System.Collections.Generic.Dictionary<Type, Table> _Tables;
-        public readonly IReadOnlyDictionary<Type, Table> Tables;
+        public readonly IEnumerable<Table> Tables;
         public Database(params Raw.IRowProvidable[] queryables)
         {
             _Tables = new Dictionary<Type, Table>();
-            Tables = _Tables;
+            Tables = _Tables.Values;
             _Build(_Sort(queryables));
+        }
+
+        public Database(IEnumerable<Table> tables)
+        {
+            _Tables = tables.ToDictionary(t=>t.Type);
+            Tables = _Tables.Values;
         }
 
         private IEnumerable<IRowProvidable> _Sort(IRowProvidable[] queryables)

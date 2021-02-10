@@ -3,6 +3,23 @@ namespace Regulus.RelationalTables.Tests
 {
     namespace Serialization
     {
+        public class TableSerializTest_ItemC
+        {
+            public TableSerializTest_ItemA Field2;
+            public float Field1;
+        }
+        public struct TableSerializTest_ItemB
+        {
+            public string Field1;
+            public TableSerializTest_ItemC Field2;
+        }
+        public class TableSerializTest_ItemA
+        {
+            public int Field1;
+
+            public TableSerializTest_ItemB[] Field2;
+
+        }
         public class BinaryConverterTest_ItemD
         {
             public int Field;
@@ -72,7 +89,7 @@ namespace Regulus.RelationalTables.Tests
             var itemA = table.Instances.Single() as Serialization.BinaryConverterTest_ItemA;
             NUnit.Framework.Assert.AreEqual(5, itemA.FieldArray[4]);
         }
-        /*[NUnit.Framework.Test]
+        [NUnit.Framework.Test]
         public void BinaryConverterTestItemCD()
         {
             var itemC = new Serialization.BinaryConverterTest_ItemC();
@@ -91,7 +108,7 @@ namespace Regulus.RelationalTables.Tests
             NUnit.Framework.Assert.AreEqual(1 , outItem.ItemC.Field );
             NUnit.Framework.Assert.AreEqual(2, outItem.ItemC.FieldD.Field);
 
-        }*/
+        }
         [NUnit.Framework.Test]
         public void BinaryConverterTestItemB()
         {
@@ -144,6 +161,43 @@ namespace Regulus.RelationalTables.Tests
             NUnit.Framework.Assert.AreEqual(typeof(Serialization.TypeSeparatorTest_ItemB), types[1]);
             NUnit.Framework.Assert.AreEqual(typeof(Serialization.TypeSeparatorTest_ItemC), types[2]);
 
+        }
+
+
+        [NUnit.Framework.Test]
+        public void TableSerializTest()
+        {
+
+            var itemA = new Serialization.TableSerializTest_ItemA();
+            itemA.Field1 = 1;
+
+            var itemB = new Serialization.TableSerializTest_ItemB();
+            itemB.Field1 = "test";
+            itemA.Field2 = new[] { itemB };
+            var itemC = new Serialization.TableSerializTest_ItemC();
+            itemC.Field1 = 3f;
+            itemC.Field2 = itemA;
+            var stream = new System.IO.MemoryStream();
+
+            var sourceTables = new Table[] { new Table(typeof(Serialization.TableSerializTest_ItemA) , new[] { itemA}) , 
+                new Table(typeof(Serialization.TableSerializTest_ItemC) , new []{itemC } )  } ;
+            var srcDb = new Database(sourceTables);
+
+            var converter = new Regulus.RelationalTables.Serialization.BinaryConverter();
+            converter.WriteToStream(srcDb.Tables, stream , new TypeProvider());
+            stream.Position = 0;
+            var outTables = converter.ReadFromStream(stream, new TypeProvider());
+
+            var outDb = new Database(outTables);
+
+            var resultItemA = outDb.Query<Serialization.TableSerializTest_ItemA>().Where(i => i.Field1 == 1).Single();
+            var resultItemC = outDb.Query<Serialization.TableSerializTest_ItemC>().Where(i => i.Field2.Field1 == 1).Single();
+            var resultItemB = outDb.Query<Serialization.TableSerializTest_ItemB>().Any();
+
+            NUnit.Framework.Assert.AreEqual(1 , resultItemA.Field1);
+            NUnit.Framework.Assert.AreEqual(1, resultItemC.Field2.Field1);
+            NUnit.Framework.Assert.AreEqual("test", resultItemC.Field2.Field2[0].Field1);
+            NUnit.Framework.Assert.AreEqual(false, resultItemB);
         }
 
     }
