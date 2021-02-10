@@ -241,5 +241,5 @@ var tables = converter.ReadFromStream(stream, /* ITypeProviable */);
 var db = new Regulus.RelationalTables.Database(tables);
 ```
 **ITypeProviable**  
-Need to implement ```ITypeproViable``` to provide type information.
+Need to implement ```ITypeProviable``` to provide type information.
 
