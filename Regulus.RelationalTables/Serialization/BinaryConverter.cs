@@ -45,23 +45,9 @@ namespace Regulus.RelationalTables.Serialization
             public TableIndex[] TableIndexs;
             public Object[] Objects;
             public byte[] Buffer;
+            
 
-            internal IEnumerable<Table> ToTables(ITypeProviable type_proviable)
-            {
-                var stream = new System.IO.MemoryStream(Buffer);
-                var typeIndexByIdNumber = TypeIndexs.ToLookup(t => t.Id.Number);
-                stream.Position = 0;
-                var instances = _CreateInstance(typeIndexByIdNumber, type_proviable, stream);
-
-                foreach (var tableIndex in TableIndexs)
-                {
-                    TypeIndex typeIndex = typeIndexByIdNumber[tableIndex.Type].Single();
-                    var type = type_proviable.GetTypeByFullName(typeIndex.Id.Name);
-                    yield return new Table(type, instances.Where(i => i.GetType().IsEquivalentTo(type)));
-                }
-            }
-
-            private IEnumerable<object> _CreateInstance(ILookup<int, TypeIndex> type_indices, ITypeProviable type_proviable, System.IO.Stream stream
+            public IEnumerable<object> CreateInstance(ILookup<int, TypeIndex> type_indices, ITypeProviable type_proviable, System.IO.Stream stream
                 )
             {
 
@@ -102,7 +88,6 @@ namespace Regulus.RelationalTables.Serialization
                 {
                     linker.Set();
                 }
-
 
                 foreach (var linker in linkers)
                 {
