@@ -3,6 +3,15 @@ namespace Regulus.RelationalTables.Tests
 {
     namespace Serialization
     {
+        public class FieldRepeatedReferenceTest_ItemB
+        {
+            public int Field;
+        }
+        public class FieldRepeatedReferenceTest_ItemA
+        {
+            public FieldRepeatedReferenceTest_ItemB Field1;
+            public FieldRepeatedReferenceTest_ItemB Field2;
+        }
         public class TableSerializTest_ItemC
         {
             public TableSerializTest_ItemA Field2;
@@ -163,7 +172,30 @@ namespace Regulus.RelationalTables.Tests
 
         }
 
+        [NUnit.Framework.Test]
+        public void FieldRepeatedReferenceTest()
+        {
+            var itema = new Serialization.FieldRepeatedReferenceTest_ItemA();
+            var itemb = new Serialization.FieldRepeatedReferenceTest_ItemB();
+            itemb.Field = 1;
+            itema.Field1 = itemb;
+            itema.Field2 = itemb;
 
+            var converter = new Regulus.RelationalTables.Serialization.BinaryConverter();
+            var stream = new System.IO.MemoryStream();
+            converter.WriteToStream(new Table[] { 
+                                    new Table(typeof(Serialization.FieldRepeatedReferenceTest_ItemA) , new []{itema ,itema}) 
+                                    } , stream , new TypeProvider());
+            stream.Position = 0;
+            var tables = converter.ReadFromStream(stream, new TypeProvider()).ToArray();
+            var outItema = tables.Where(t => t.Type == typeof(Serialization.FieldRepeatedReferenceTest_ItemA)).SelectMany(t => t.Instances).Single() as Serialization.FieldRepeatedReferenceTest_ItemA;
+
+            NUnit.Framework.Assert.AreEqual(1 , outItema.Field1.Field);
+            NUnit.Framework.Assert.AreEqual(1, outItema.Field2.Field);
+
+
+
+        }
         [NUnit.Framework.Test]
         public void TableSerializTest()
         {

@@ -126,12 +126,16 @@ namespace Regulus.RelationalTables.Serialization
             var types =  new HashSet<System.Type>(tables.SelectMany(t => new NodeTypeSeparator(t.Type).Types));
             var typeIndexs = types.Select(t => t.ToIndex()).ToArray();           
             database.TypeIndexs = typeIndexs;
-            database.TableIndexs = _CreateTableIndexs(tables.Select(t=>t.Type)).ToArray();           
-            var buffer= new System.IO.MemoryStream();
-            database.Objects = _CreateObjectFields(_CreateObjects(tables),  typeIndexs, buffer, type_proviable).ToArray();
-            buffer.Position = 0;
-            database.Buffer = buffer.GetBuffer();
-            database.ToBinary(stream);
+            database.TableIndexs = _CreateTableIndexs(tables.Select(t=>t.Type)).ToArray();
+            using (var buffer = new System.IO.MemoryStream())
+            {
+                database.Objects = _CreateObjectFields(_CreateObjects(tables), typeIndexs, buffer, type_proviable).ToArray();
+                buffer.Position = 0;
+                database.Buffer = buffer.ToArray();
+                database.ToBinary(stream);
+            }
+                
+            
         }
 
         private IEnumerable<Binary.Object> _CreateObjectFields(IEnumerable<Tuple<Binary.Object, object>> objects, IEnumerable<Binary.TypeIndex> type_indices ,System.IO.Stream stream , ITypeProviable type_proviable)

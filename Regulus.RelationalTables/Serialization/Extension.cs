@@ -4,6 +4,27 @@ using System.Collections.Generic;
 
 namespace Regulus.RelationalTables.Serialization
 {
+    class IdProvider
+    {
+        readonly System.Collections.Generic.Dictionary<object, int> _Catch;
+        int _Id;
+        public IdProvider()
+        {
+            _Catch = new Dictionary<object, int>();
+        }
+        public int GetId(object instance)
+        {
+            int id;
+            if(_Catch.TryGetValue(instance,out id))
+            {
+                return id;
+            }
+            id = ++_Id;
+            _Catch.Add(instance , id);
+            return id;
+        }
+    }
+    
     public static class Extension
     {
         public static void ToDatabase(this System.IO.Stream stream , out Binary.Database database)
@@ -39,18 +60,19 @@ namespace Regulus.RelationalTables.Serialization
 
             throw new Exception($"error type {type} , code {code}.");
         }
+        static IdProvider _IdProvider = new IdProvider();
         public static int GetId(this object instance)
         {
-            return instance.GetHashCode();
+            return _IdProvider.GetId(instance); 
         }
         public static int GetId(this System.Type type)
         {
-            return type.GetHashCode();
+            return _IdProvider.GetId(type);
         }
 
         public static int GetId(this System.Reflection.FieldInfo field)
         {
-            return field.GetHashCode();
+            return _IdProvider.GetId(field); 
         }
 
         public static Binary.Index ToIndex(this System.Reflection.FieldInfo info)
