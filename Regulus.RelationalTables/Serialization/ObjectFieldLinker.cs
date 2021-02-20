@@ -4,22 +4,21 @@ using System.Reflection;
 
 namespace Regulus.RelationalTables.Serialization
 {
-    interface IObjectFieldLinkable
-    {
-        void Set();
-    }
+   
     internal class ObjectFieldLinker : IObjectFieldLinkable
     {
-        private Stream _Stream;
-        private Binary.Field _Field;
+        
         private FieldInfo _Info;
         private readonly object _Instance;
         private readonly IDictionary<int, object> _Instances;
 
+        readonly int _InstanceId;
+
         public ObjectFieldLinker(Stream stream, Binary.Field field, FieldInfo info, object instance  , System.Collections.Generic.IDictionary<int , object> instances)
         {
-            this._Stream = stream;
-            this._Field = field;
+            stream.Position = field.Position;
+            var id = (int)stream.ToValue();
+            _InstanceId = id;
             this._Info = info;
             this._Instance = instance;
             this._Instances = instances;
@@ -27,10 +26,9 @@ namespace Regulus.RelationalTables.Serialization
 
         void IObjectFieldLinkable.Set()
         {
-            _Stream.Position = _Field.Position;
-            var id = (int)_Stream.ToValue();
             
-            _Info.SetValue(_Instance, _Instances[id]);            
+            
+            _Info.SetValue(_Instance, _Instances[_InstanceId]);            
         }
     }
 }

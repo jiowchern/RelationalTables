@@ -83,16 +83,12 @@ namespace Regulus.RelationalTables.Serialization
                     }
 
                 }
-
-                foreach (var linker in linkers)
-                {
+                System.Threading.Tasks.Parallel.ForEach(linkers, (linker) => {
                     linker.Set();
-                }
-
-                foreach (var linker in linkers)
-                {
+                });
+                System.Threading.Tasks.Parallel.ForEach(linkers, (linker) => {
                     linker.Set();
-                }
+                });
 
                 return instances.Values;
             }
